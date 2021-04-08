@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -24,17 +24,36 @@ import {
 
 const drawerWidth = 240;
 
+
 // Map
 
 
 const MapWithAMarker = withScriptjs(withGoogleMap(props =>
+
     <GoogleMap
         defaultZoom={17}
         defaultCenter={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
     >
-        <Marker
+        {/* <Marker
             position={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
-        />
+            defaultLabel={String(props.users)}
+        /> */}
+
+
+        {props.users.length > 1 ?
+            props.users.map(user => (
+                user.measurements.map(measurement =>
+                    <Marker
+                        key={measurement._id}
+                        position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
+                        defaultTitle={String(user.username)}
+                    />
+                )
+            ))
+            : <Marker
+                position={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
+                defaultLabel={String(props.markers)}
+            />}
     </GoogleMap>
 ));
 
@@ -71,10 +90,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+//"editor.fontFamily": "'Fira Code', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+
 export default function PermanentDrawerLeft({ data }) {
+    const [currentUser, setCurrentUser] = useState('');
+    const [markers, setMarkers] = useState(0);
+
     const classes = useStyles();
 
-    const getUserInfo = () => console.log('Got user info');
+    const getUserInfo = (user) => {
+        setCurrentUser(user);
+        console.log(currentUser);
+    }
 
     return (
         <div className={classes.root}>
@@ -108,7 +135,7 @@ export default function PermanentDrawerLeft({ data }) {
                 <Divider />
                 <List>
                     {data.map((user) => (
-                        <ListItem button key={user._id} onClick={getUserInfo}>
+                        <ListItem button key={user._id} onClick={() => setCurrentUser(user)}>
                             <ListItemIcon> <AccountCircleIcon /> </ListItemIcon>
                             <ListItemText primary={user.username} />
                         </ListItem>
@@ -122,11 +149,13 @@ export default function PermanentDrawerLeft({ data }) {
                     loadingElement={<div style={{ height: `100%` }} />}
                     containerElement={<div style={{ height: `600px` }} />}
                     mapElement={<div style={{ height: `100%` }} />}
+                    users={currentUser ? currentUser : data}
+                    markers={markers}
                 />
                 <br />
                 <Typography paragraph>
-                    Currently showing tour info for user:
-        </Typography>
+                    Currently showing tour info for user: {currentUser.username}
+                </Typography>
 
             </main>
         </div>
