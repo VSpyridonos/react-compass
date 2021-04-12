@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import PersistentDrawerLeft from "./components/Drawer";
+import PermanentDrawerLeft from "./components/Drawer";
 import axios from 'axios';
 
 
@@ -25,7 +25,7 @@ const App = () => {
 
   return (
     <div>
-      <PersistentDrawerLeft data={data} />
+      <PermanentDrawerLeft data={data} />
     </div>
   );
 

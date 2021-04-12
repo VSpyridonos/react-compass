@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect, useReducer } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,9 +12,22 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import axios from 'axios';
 import ExploreIcon from '@material-ui/icons/Explore';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+
 import {
     withScriptjs,
     withGoogleMap,
@@ -40,7 +53,7 @@ const MapWithAMarker = withScriptjs(withGoogleMap(props =>
         /> */}
 
 
-        {props.users.length > 1 ?
+        {/* {props.users.length > 1000 ?
             props.users.map(user => (
                 user.measurements.map(measurement =>
                     <Marker
@@ -53,7 +66,11 @@ const MapWithAMarker = withScriptjs(withGoogleMap(props =>
             : <Marker
                 position={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
                 defaultLabel={String(props.markers)}
-            />}
+            />} */}
+
+        {console.log(props)}
+        {props.markers.map(marker => marker)}
+        {/* {console.log(props.markers)} */}
     </GoogleMap>
 ));
 
@@ -90,11 +107,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-//"editor.fontFamily": "'Fira Code', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
 
 export default function PermanentDrawerLeft({ data }) {
     const [currentUser, setCurrentUser] = useState('');
-    const [markers, setMarkers] = useState(0);
+    const [markers, setMarkers] = useState([]);
+
+
+    const [olderTours, setOlderTours] = useState(false);
 
     const classes = useStyles();
 
@@ -103,15 +122,51 @@ export default function PermanentDrawerLeft({ data }) {
         console.log(currentUser);
     }
 
+    const [formInput, setFormInput] = useReducer(
+        (state, newState) => ({ ...state, ...newState }),
+        {
+            user: ""
+        }
+    );
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        let { user } = formInput;
+        setMarkers([]);
+
+        const results = await axios.get(`http://localhost:3001/users/${user}`);
+        await setCurrentUser(results.data);
+        let userMarkers = await results.data.measurements.map(measurement =>
+            <Marker
+                key={measurement._id}
+                position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
+                defaultTitle={String(results.data.username)}
+            />
+        );
+
+
+        setMarkers(userMarkers);
+        //console.log(userMarkers);
+        // console.log(markers);
+
+
+        //setCurrentUser(user);
+    };
+
+    const handleInput = e => {
+        const user = e.target.name;
+        const newValue = e.target.value;
+        setFormInput({ [user]: newValue });
+    };
+
     return (
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" noWrap>
-
                         <span style={{ fontSize: '36px' }}>C<ExploreIcon className="material-icons" style={{ fontSize: '28px' }} />mpass</span>
-
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -124,23 +179,59 @@ export default function PermanentDrawerLeft({ data }) {
                 anchor="left"
             >
                 <div className={classes.toolbar} />
-                <Divider />
-                <List>
 
-                    <ListItem>
-                        <ListItemIcon> <PeopleAltIcon /> </ListItemIcon>
-                        <ListItemText primary="User List" />
-                    </ListItem>
-                </List>
                 <Divider />
-                <List>
-                    {data.map((user) => (
-                        <ListItem button key={user._id} onClick={() => setCurrentUser(user)}>
-                            <ListItemIcon> <AccountCircleIcon /> </ListItemIcon>
-                            <ListItemText primary={user.username} />
-                        </ListItem>
-                    ))}
-                </List>
+                <br />
+                <br />
+
+                <form onSubmit={handleSubmit} style={{ 'margin-left': '15px' }}>
+
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="user-select-label">Select a user</InputLabel>
+                        <Select
+                            name="user"
+                            labelId="user-select-label"
+                            id="user-select"
+                            native
+                            value={formInput.user ? formInput.user : ''}
+                            onChange={handleInput}
+                        >
+                            <option aria-label="None" value="" />
+                            <option value="All Users" style={{ 'fontWeight': 'bold' }}>All Users</option>
+                            {data.map((user) => (
+                                <option key={user._id} value={user._id}>{user.username}</option>
+                            ))}
+
+                        </Select>
+                    </FormControl>
+
+                    <br />
+                    <br />
+                    <FormControl component="fieldset">
+                        <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                                value="end"
+                                control={<Checkbox
+                                    color="primary"
+                                    checked={olderTours}
+                                    value={olderTours}
+                                    onChange={(e) => setOlderTours(e.currentTarget.checked)}
+                                    inputProps={{ 'aria-label': 'Checkbox A' }}
+                                    labelplacement="end"
+                                />}
+                                label="Also display older tours"
+                                labelPlacement="end"
+                            />
+                        </FormGroup>
+                    </FormControl>
+                    <br />
+                    <br />
+                    <Button variant="contained" color="primary" type="submit">
+                        DISPLAY
+                    </Button>
+
+
+                </form>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
@@ -152,6 +243,7 @@ export default function PermanentDrawerLeft({ data }) {
                     users={currentUser ? currentUser : data}
                     markers={markers}
                 />
+
                 <br />
                 <Typography paragraph>
                     Currently showing tour info for user: {currentUser.username}
