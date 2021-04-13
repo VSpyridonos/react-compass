@@ -1,4 +1,5 @@
 import { React, useState, useEffect, useReducer } from 'react';
+import NewMap from './NewMap';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -27,54 +28,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
 
 import {
     withScriptjs,
     withGoogleMap,
-    GoogleMap,
     Marker,
 } from "react-google-maps";
 
 const drawerWidth = 240;
-
-
-// Map
-
-
-const MapWithAMarker = withScriptjs(withGoogleMap(props =>
-
-    <GoogleMap
-        defaultZoom={17}
-        defaultCenter={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
-    >
-        {/* <Marker
-            position={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
-            defaultLabel={String(props.users)}
-        /> */}
-
-
-        {/* {props.users.length > 1000 ?
-            props.users.map(user => (
-                user.measurements.map(measurement =>
-                    <Marker
-                        key={measurement._id}
-                        position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-                        defaultTitle={String(user.username)}
-                    />
-                )
-            ))
-            : <Marker
-                position={{ lat: 39.67310608025676, lng: 20.855661058932768 }}
-                defaultLabel={String(props.markers)}
-            />} */}
-
-        {console.log(props)}
-        {props.markers.map(marker => marker)}
-        {/* {console.log(props.markers)} */}
-    </GoogleMap>
-));
-
-
 
 
 const googleMapsKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -111,8 +73,7 @@ const useStyles = makeStyles((theme) => ({
 export default function PermanentDrawerLeft({ data }) {
     const [currentUser, setCurrentUser] = useState('');
     const [markers, setMarkers] = useState([]);
-
-
+    const [originalMarkers, setOriginalMarkers] = useState([]);
     const [olderTours, setOlderTours] = useState(false);
 
     const classes = useStyles();
@@ -128,6 +89,9 @@ export default function PermanentDrawerLeft({ data }) {
             user: ""
         }
     );
+
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -145,8 +109,21 @@ export default function PermanentDrawerLeft({ data }) {
             />
         );
 
-
         setMarkers(userMarkers);
+
+        let userOriginalMarkers = await results.data.measurements.map(measurement =>
+            <Marker
+                key={measurement._id}
+                position={{ lat: parseFloat(measurement.xHatOriginal[0]), lng: parseFloat(measurement.xHatOriginal[1]) }}
+                defaultTitle={String(results.data.username)}
+            />
+        );
+
+        setOriginalMarkers(userOriginalMarkers);
+
+
+
+
         //console.log(userMarkers);
         // console.log(markers);
 
@@ -154,11 +131,22 @@ export default function PermanentDrawerLeft({ data }) {
         //setCurrentUser(user);
     };
 
+
+
+
+
+
     const handleInput = e => {
         const user = e.target.name;
         const newValue = e.target.value;
         setFormInput({ [user]: newValue });
     };
+
+
+
+
+
+
 
     return (
         <div className={classes.root}>
@@ -235,19 +223,12 @@ export default function PermanentDrawerLeft({ data }) {
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <MapWithAMarker
-                    googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&v=3.exp&libraries=geometry,drawing,places`}
-                    loadingElement={<div style={{ height: `100%` }} />}
-                    containerElement={<div style={{ height: `600px` }} />}
-                    mapElement={<div style={{ height: `100%` }} />}
+                <NewMap
                     users={currentUser ? currentUser : data}
                     markers={markers}
-                />
+                    originalMarkers={originalMarkers}
 
-                <br />
-                <Typography paragraph>
-                    Currently showing tour info for user: {currentUser.username}
-                </Typography>
+                />
 
             </main>
         </div>

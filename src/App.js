@@ -14,7 +14,7 @@ const App = () => {
       const result = await axios.get(
         'http://localhost:3001/users/all-users',
       );
-      console.log(result.data)
+      //console.log(result.data)
       setData(result.data);
     };
 
