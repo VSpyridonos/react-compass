@@ -75,6 +75,7 @@ export default function PermanentDrawerLeft({ data }) {
     const [markers, setMarkers] = useState([]);
     const [originalMarkers, setOriginalMarkers] = useState([]);
     const [olderTours, setOlderTours] = useState(false);
+    const [olderMarkers, setOlderMarkers] = useState([]);
 
     const classes = useStyles();
 
@@ -105,7 +106,7 @@ export default function PermanentDrawerLeft({ data }) {
             <Marker
                 key={measurement._id}
                 position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-                defaultTitle={String(results.data.username)}
+                defaultTitle={`${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
             />
         );
 
@@ -115,20 +116,30 @@ export default function PermanentDrawerLeft({ data }) {
             <Marker
                 key={measurement._id}
                 position={{ lat: parseFloat(measurement.xHatOriginal[0]), lng: parseFloat(measurement.xHatOriginal[1]) }}
-                defaultTitle={String(results.data.username)}
+                defaultTitle={`Original Data:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
             />
         );
 
         setOriginalMarkers(userOriginalMarkers);
 
+        // let allOlderMarkers = []
+        // if (olderTours) {
+        //     for (let measurements of results.data.olderMeasurements) {
+        //         let userOlderMarkers = await measurements.map(measurement =>
+        //             <Marker
+        //                 key={measurement._id}
+        //                 position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
+        //                 defaultTitle={`Older measurement:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+        //             />
+        //         );
+        //         allOlderMarkers.push(userOlderMarkers)
+        //     }
+
+        // }
+        // setOlderMarkers(allOlderMarkers);
 
 
 
-        //console.log(userMarkers);
-        // console.log(markers);
-
-
-        //setCurrentUser(user);
     };
 
 
@@ -199,14 +210,16 @@ export default function PermanentDrawerLeft({ data }) {
                         <FormGroup aria-label="position" row>
                             <FormControlLabel
                                 value="end"
-                                control={<Checkbox
-                                    color="primary"
-                                    checked={olderTours}
-                                    value={olderTours}
-                                    onChange={(e) => setOlderTours(e.currentTarget.checked)}
-                                    inputProps={{ 'aria-label': 'Checkbox A' }}
-                                    labelplacement="end"
-                                />}
+                                control={
+                                    <Checkbox
+                                        color="primary"
+                                        checked={olderTours}
+                                        value={olderTours}
+                                        onChange={(e) => setOlderTours(e.currentTarget.checked)}
+                                        inputProps={{ 'aria-label': 'Checkbox A' }}
+                                        labelplacement="end"
+                                    />
+                                }
                                 label="Also display older tours"
                                 labelPlacement="end"
                             />
@@ -227,6 +240,7 @@ export default function PermanentDrawerLeft({ data }) {
                     users={currentUser ? currentUser : data}
                     markers={markers}
                     originalMarkers={originalMarkers}
+                    olderTours={olderTours}
 
                 />
 

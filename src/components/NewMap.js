@@ -7,11 +7,28 @@ const containerStyle = {
     height: '600px'
 };
 
-// const onLoad = marker => {
-//     console.log('marker: ', marker)
-// }
+const markerIcons = [
+    'http://maps.google.com/mapfiles/ms/icons/yellow.png',
+    'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/blue.png',
+    'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/green.png',
+    'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/orange.png',
+    'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/pink.png',
+    'http://maps.google.com/mapfiles/ms/icons/pink-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/purple.png',
+    'http://maps.google.com/mapfiles/ms/icons/purple-dot.png',
+    'http://maps.google.com/mapfiles/ms/icons/red.png',
+    'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+]
 
-function NewMap({ users, markers, originalMarkers }) {
+function NewMap({ users, markers, originalMarkers, olderTours, olderMarkers }) {
+    let randomNumber1 = Math.floor(Math.random() * 14) + 1;
+    let randomNumber2 = Math.floor(Math.random() * 14) + 1;
+    let randomNumber3 = Math.floor(Math.random() * 14) + 1;
+
     return (
         <LoadScript
             googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
@@ -31,6 +48,7 @@ function NewMap({ users, markers, originalMarkers }) {
                     position={marker.props.position}
                     title={marker.props.defaultTitle}
                     animation={'DROP'}
+                    icon={markerIcons[randomNumber1]}
                 />)}
 
                 {originalMarkers.map((originalMarker, index) => <Marker
@@ -38,7 +56,16 @@ function NewMap({ users, markers, originalMarkers }) {
                     position={originalMarker.props.position}
                     title={originalMarker.props.defaultTitle}
                     animation={'DROP'}
+                    icon={markerIcons[randomNumber2]}
                 />)}
+
+                {/* {olderTours ? olderMarkers.map((olderMarker, index) => <Marker
+                    key={index}
+                    position={olderMarker.props.position}
+                    title={olderMarker.props.defaultTitle}
+                    animation={'DROP'}
+                    icon={markerIcons[randomNumber2]}
+                />) : ''} */}
 
 
                 <></>
