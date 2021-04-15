@@ -98,10 +98,15 @@ export default function PermanentDrawerLeft({ data }) {
         e.preventDefault();
 
         let { user } = formInput;
-        setMarkers([]);
+
+        if (user === 'All Users') {
+            let resultsAll = await axios.get('http://localhost:3001/users/all-users');
+            await setCurrentUser('All Users');
+            console.log(resultsAll);
+        }
 
         const results = await axios.get(`http://localhost:3001/users/${user}`);
-        await setCurrentUser(results.data);
+        setCurrentUser(results.data);
         let userMarkers = await results.data.measurements.map(measurement =>
             <Marker
                 key={measurement._id}
@@ -109,6 +114,8 @@ export default function PermanentDrawerLeft({ data }) {
                 defaultTitle={`${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
             />
         );
+
+        console.log(results.data)
 
         setMarkers(userMarkers);
 
@@ -122,21 +129,27 @@ export default function PermanentDrawerLeft({ data }) {
 
         setOriginalMarkers(userOriginalMarkers);
 
-        // let allOlderMarkers = []
-        // if (olderTours) {
-        //     for (let measurements of results.data.olderMeasurements) {
-        //         let userOlderMarkers = await measurements.map(measurement =>
-        //             <Marker
-        //                 key={measurement._id}
-        //                 position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-        //                 defaultTitle={`Older measurement:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
-        //             />
-        //         );
-        //         allOlderMarkers.push(userOlderMarkers)
-        //     }
+        if (!olderTours) return;
 
-        // }
-        // setOlderMarkers(allOlderMarkers);
+        let allOlderMarkers = []
+        if (results.data.olderMeasurements.length) {
+            for (let measurements of results.data.olderMeasurements) {
+                let userOlderMarkers = await measurements.map(measurement =>
+                    <Marker
+                        key={measurement._id}
+                        position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
+                        defaultTitle={`Older measurement:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+                    />
+                );
+                allOlderMarkers.push(userOlderMarkers)
+            }
+
+        }
+        setOlderMarkers(allOlderMarkers);
+
+        console.log(markers);
+        console.log(originalMarkers);
+        console.log(olderMarkers);
 
 
 
@@ -183,7 +196,7 @@ export default function PermanentDrawerLeft({ data }) {
                 <br />
                 <br />
 
-                <form onSubmit={handleSubmit} style={{ 'margin-left': '15px' }}>
+                <form onSubmit={handleSubmit} style={{ 'marginLeft': '15px' }}>
 
                     <FormControl className={classes.formControl}>
                         <InputLabel id="user-select-label">Select a user</InputLabel>
@@ -241,8 +254,16 @@ export default function PermanentDrawerLeft({ data }) {
                     markers={markers}
                     originalMarkers={originalMarkers}
                     olderTours={olderTours}
+                    olderMarkers={olderMarkers}
 
                 />
+
+                <br />
+                <br />
+
+                <Typography paragraph>
+                    Currently showing tour info for user: {currentUser.username ?? currentUser}
+                </Typography>
 
             </main>
         </div>

@@ -43,29 +43,29 @@ function NewMap({ users, markers, originalMarkers, olderTours, olderMarkers }) {
             >
                 { /* Child components, such as markers, info windows, etc. */}
 
-                {markers.map((marker, index) => <Marker
+                {markers ? markers.map((marker, index) => <Marker
                     key={index}
                     position={marker.props.position}
                     title={marker.props.defaultTitle}
                     animation={'DROP'}
                     icon={markerIcons[randomNumber1]}
-                />)}
+                />) : ''}
 
-                {originalMarkers.map((originalMarker, index) => <Marker
+                {originalMarkers ? originalMarkers.map((originalMarker, index) => <Marker
                     key={index}
                     position={originalMarker.props.position}
                     title={originalMarker.props.defaultTitle}
                     animation={'DROP'}
                     icon={markerIcons[randomNumber2]}
-                />)}
+                />) : ''}
 
-                {/* {olderTours ? olderMarkers.map((olderMarker, index) => <Marker
+                {olderTours ? olderMarkers.map((olderMarker, index) => olderMarker.map((marker, index) => <Marker
                     key={index}
-                    position={olderMarker.props.position}
-                    title={olderMarker.props.defaultTitle}
+                    position={marker.props.position}
+                    title={marker.props.defaultTitle}
                     animation={'DROP'}
-                    icon={markerIcons[randomNumber2]}
-                />) : ''} */}
+                    icon={markerIcons[randomNumber3]}
+                />)) : ''}
 
 
                 <></>
