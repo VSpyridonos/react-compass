@@ -24,10 +24,11 @@ const markerIcons = [
     'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
 ]
 
-function NewMap({ users, markers, originalMarkers, olderTours, olderMarkers }) {
+function NewMap({ users, markers, originalMarkers, olderTours, olderMarkers, allMarkers, allOriginalMarkers }) {
     let randomNumber1 = Math.floor(Math.random() * 14) + 1;
     let randomNumber2 = Math.floor(Math.random() * 14) + 1;
     let randomNumber3 = Math.floor(Math.random() * 14) + 1;
+    let randomNumber4 = Math.floor(Math.random() * 14) + 1;
 
     return (
         <LoadScript
@@ -65,6 +66,24 @@ function NewMap({ users, markers, originalMarkers, olderTours, olderMarkers }) {
                     title={marker.props.defaultTitle}
                     animation={'DROP'}
                     icon={markerIcons[randomNumber3]}
+                />)) : ''}
+
+
+                {allMarkers.length ?
+                    allMarkers.map((markers, index) => markers.map((marker, index) => <Marker
+                        key={index}
+                        position={marker.props.position}
+                        title={marker.props.defaultTitle}
+                        animation={'DROP'}
+                        icon={markerIcons[randomNumber4]}
+                    />)) : ''}
+
+                {allOriginalMarkers.length ? allOriginalMarkers.map((originalMarkers, index) => originalMarkers.map((originalMarker, index) => <Marker
+                    key={index}
+                    position={originalMarker.props.position}
+                    title={originalMarker.props.defaultTitle}
+                    animation={'DROP'}
+                    icon={markerIcons[randomNumber1]}
                 />)) : ''}
 
 

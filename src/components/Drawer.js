@@ -76,6 +76,8 @@ export default function PermanentDrawerLeft({ data }) {
     const [originalMarkers, setOriginalMarkers] = useState([]);
     const [olderTours, setOlderTours] = useState(false);
     const [olderMarkers, setOlderMarkers] = useState([]);
+    const [allMarkers, setAllMarkers] = useState([]);
+    const [allOriginalMarkers, setAllOriginalMarkers] = useState([]);
 
     const classes = useStyles();
 
@@ -99,11 +101,38 @@ export default function PermanentDrawerLeft({ data }) {
 
         let { user } = formInput;
 
+
+        let allUserMarkers = [];
+        let allUserOriginalMarkers = [];
         if (user === 'All Users') {
             let resultsAll = await axios.get('http://localhost:3001/users/all-users');
-            await setCurrentUser('All Users');
-            console.log(resultsAll);
+            setCurrentUser('All Users');
+            for (let user of resultsAll.data) {
+                let userMarkers = await user.measurements.map(measurement =>
+                    <Marker
+                        key={measurement._id}
+                        position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
+                        defaultTitle={`${String(user.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
+                    />
+                );
+                allUserMarkers.push(userMarkers);
+
+                let userOriginalMarkers = await user.measurements.map(measurement =>
+                    <Marker
+                        key={measurement._id}
+                        position={{ lat: parseFloat(measurement.xHatOriginal[0]), lng: parseFloat(measurement.xHatOriginal[1]) }}
+                        defaultTitle={`Original Data:\n${String(user.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+                    />
+                );
+                allUserOriginalMarkers.push(userOriginalMarkers);
+
+            }
+
         }
+        setAllMarkers(allUserMarkers);
+        setAllOriginalMarkers(allUserOriginalMarkers);
+
+
 
         const results = await axios.get(`http://localhost:3001/users/${user}`);
         setCurrentUser(results.data);
@@ -255,6 +284,8 @@ export default function PermanentDrawerLeft({ data }) {
                     originalMarkers={originalMarkers}
                     olderTours={olderTours}
                     olderMarkers={olderMarkers}
+                    allMarkers={allMarkers}
+                    allOriginalMarkers={allOriginalMarkers}
 
                 />
 
