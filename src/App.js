@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
-import PermanentDrawerLeft from "./components/Drawer";
+import ResponsiveDrawer from "./components/Drawer";
 import axios from 'axios';
 
 
@@ -25,7 +25,7 @@ const App = () => {
 
   return (
     <div>
-      <PermanentDrawerLeft data={data} />
+      <ResponsiveDrawer data={data} />
     </div>
   );
 
