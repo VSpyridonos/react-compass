@@ -112,7 +112,7 @@ function ResponsiveDrawer({ window, data }) {
                     <Marker
                         key={measurement._id}
                         position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-                        defaultTitle={`${String(user.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
+                        defaultTitle={`${String(user.username)}'s position on:\n${measurement.date.slice(0, 10)}, ${measurement.date.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
                     />
                 );
                 allUserMarkers.push(userMarkers);
@@ -121,7 +121,7 @@ function ResponsiveDrawer({ window, data }) {
                     <Marker
                         key={measurement._id}
                         position={{ lat: parseFloat(measurement.xHatOriginal[0]), lng: parseFloat(measurement.xHatOriginal[1]) }}
-                        defaultTitle={`Original Data:\n${String(user.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+                        defaultTitle={`Original Data:\n${String(user.username)}'s position on:\n${measurement.date.slice(0, 10)}, ${measurement.date.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
                     />
                 );
                 allUserOriginalMarkers.push(userOriginalMarkers);
@@ -140,7 +140,7 @@ function ResponsiveDrawer({ window, data }) {
             <Marker
                 key={measurement._id}
                 position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-                defaultTitle={`${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
+                defaultTitle={`${String(results.data.username)}'s position on:\n${measurement.date.slice(0, 10)}, ${measurement.date.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatNew[0])}\nlng: ${parseFloat(measurement.xHatNew[1])}`}
             />
         );
 
@@ -151,7 +151,7 @@ function ResponsiveDrawer({ window, data }) {
             <Marker
                 key={measurement._id}
                 position={{ lat: parseFloat(measurement.xHatOriginal[0]), lng: parseFloat(measurement.xHatOriginal[1]) }}
-                defaultTitle={`Original Data:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+                defaultTitle={`Original Data:\n${String(results.data.username)}'s position on:\n${measurement.date.slice(0, 10)}, ${measurement.date.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
             />
         );
 
@@ -166,7 +166,7 @@ function ResponsiveDrawer({ window, data }) {
                     <Marker
                         key={measurement._id}
                         position={{ lat: parseFloat(measurement.xHatNew[0]), lng: parseFloat(measurement.xHatNew[1]) }}
-                        defaultTitle={`Older measurement:\n${String(results.data.username)}'s position on:\n${measurement.createdAt.slice(0, 10)}, ${measurement.createdAt.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
+                        defaultTitle={`Older measurement:\n${String(results.data.username)}'s position on:\n${measurement.date.slice(0, 10)}, ${measurement.date.slice(11, 19)}\n\nlat: ${parseFloat(measurement.xHatOriginal[0])}\nlng: ${parseFloat(measurement.xHatOriginal[1])}`}
                     />
                 );
                 allOlderMarkers.push(userOlderMarkers)
